@@ -1,0 +1,5 @@
+{
+  "name": "DXP-SmartDocuments Plugin",
+  "description": "An intelligent document parsing and processing plugin for NiFi. Users can manage templates with AI assistance, define business rules, review parsed data, and trigger downstream automation flows.",
+  "requestFramePermissions": []
+}
