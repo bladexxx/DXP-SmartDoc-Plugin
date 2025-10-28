@@ -1,4 +1,3 @@
-
 // Fix: Replaced incorrect component code with actual type definitions.
 export enum View {
     Parser = 'Parser',
@@ -25,13 +24,19 @@ export interface Template {
     partnerName?: string;
 }
 
-export interface ParsedDataItem {
+export interface ParsedDataField {
     id: string;
     field: string;
     value: string;
     confidence: number;
     status: 'Confirmed' | 'Needs Review';
 }
+
+export interface ParsedOutput {
+    headerData: ParsedDataField[];
+    items: Record<string, ParsedDataField>[];
+}
+
 
 export interface MappingRule {
     id: string;
@@ -58,4 +63,11 @@ export interface BizModel {
     description: string;
     schema: object;
     sample: any[];
+}
+
+export interface TriggerConfig {
+    actionName: string;
+    environment: 'UAT' | 'DEV';
+    exchangeName: string;
+    routingKey: string;
 }

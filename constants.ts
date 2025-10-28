@@ -1,11 +1,11 @@
-import { Partner, Template, ParsedDataItem, BizModel, MappingRuleSet } from './types';
+import { Partner, Template, ParsedOutput, BizModel, MappingRuleSet, ParsedDataField } from './types';
 
 // SVG paths for icons
 export const ICONS = {
     parser: 'M3 3h18v18H3V3zm16 16V5H5v14h14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z',
     review: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z',
     help: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z',
-    settings: 'M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59-1.69.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z',
+    settings: 'M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12-.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59-1.69.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z',
     close: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z',
     document: 'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z',
     rules: 'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z',
@@ -22,6 +22,7 @@ export const ICONS = {
     eye: 'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm-3-5c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3-3-1.34-3-3z',
     code: 'M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z',
     chevronDown: 'M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z',
+    link: 'M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z',
 };
 
 // --- BIZ MODELS ---
@@ -88,19 +89,50 @@ export const MOCK_TEMPLATES: Template[] = [
 ];
 
 // --- DYNAMIC PARSED DATA ---
-export const generateMockParsedData = (partner: Partner, template: Template): ParsedDataItem[] => {
-  return template.fields.map((field, index) => {
-    const confidence = 80 + Math.random() * 20;
-    const status = confidence > 95 ? 'Confirmed' : 'Needs Review';
-    let value = '';
-    if (field.toLowerCase().includes('number') || field.toLowerCase().includes('id')) value = `DOC-${Math.floor(1000 + Math.random() * 9000)}`;
-    else if (field.toLowerCase().includes('date')) {
-      const d = new Date(Date.now() - Math.random() * 1e10);
-      value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    } else if (field.toLowerCase().includes('amount') || field.toLowerCase().includes('charges') || field.toLowerCase().includes('price')) value = `$${(Math.random() * 2000 + 50).toFixed(2)}`;
-    else if (field.toLowerCase().includes('name')) value = partner.name;
-    else if (field.toLowerCase().includes('quantity')) value = `${Math.floor(1 + Math.random() * 20)}`;
-    else value = `Sample value for ${field}`;
-    return { id: `pd-${index + 1}`, field, value, confidence, status };
-  });
+const generateRandomValue = (field: string, partnerName: string): string => {
+    if (field.toLowerCase().includes('number') || field.toLowerCase().includes('id')) return `DOC-${Math.floor(1000 + Math.random() * 9000)}`;
+    if (field.toLowerCase().includes('date')) {
+        const d = new Date(Date.now() - Math.random() * 1e10);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+    if (field.toLowerCase().includes('amount') || field.toLowerCase().includes('charges') || field.toLowerCase().includes('price')) return `$${(Math.random() * 2000 + 50).toFixed(2)}`;
+    if (field.toLowerCase().includes('name')) return partnerName;
+    if (field.toLowerCase().includes('quantity')) return `${Math.floor(1 + Math.random() * 20)}`;
+    return `Sample value for ${field}`;
+};
+
+export const generateMockParsedData = (partner: Partner, ruleSet: MappingRuleSet): ParsedOutput => {
+    const headerData: ParsedDataField[] = ruleSet.headerRules.map((rule, index) => {
+        const confidence = 80 + Math.random() * 20;
+        return {
+            id: `pdh-${index + 1}`,
+            field: rule.targetField,
+            value: generateRandomValue(rule.sourceField, partner.name),
+            confidence,
+            status: confidence > 95 ? 'Confirmed' : 'Needs Review',
+        };
+    });
+
+    const items: Record<string, ParsedDataField>[] = [];
+    const itemCount = Math.floor(Math.random() * 4) + 2; // 2 to 5 items
+
+    if (ruleSet.itemRules.length > 0) {
+        const itemRuleSet = ruleSet.itemRules[0]; // Assuming one item list for simplicity
+        for (let i = 0; i < itemCount; i++) {
+            const row: Record<string, ParsedDataField> = {};
+            itemRuleSet.rules.forEach((rule, j) => {
+                const confidence = 80 + Math.random() * 20;
+                row[rule.targetField] = {
+                    id: `pdi-${i}-${j}`,
+                    field: rule.targetField,
+                    value: generateRandomValue(rule.sourceField, partner.name),
+                    confidence,
+                    status: confidence > 95 ? 'Confirmed' : 'Needs Review',
+                };
+            });
+            items.push(row);
+        }
+    }
+
+    return { headerData, items };
 };

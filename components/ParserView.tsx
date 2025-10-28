@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Stepper } from './Stepper';
-import { WizardStep, Partner, Template, ParsedDataItem, MappingRuleSet, MappingRule } from '../types';
+import { WizardStep, Partner, Template, ParsedOutput, MappingRuleSet } from '../types';
 import { Step1_UploadPartner } from './steps/Step1_UploadPartner';
 import { Step2_SelectTemplate } from './steps/Step2_SelectTemplate';
 import { Step3_ConfigureRules } from './steps/Step3_ConfigureRules';
 import { generateMockParsedData } from '../constants';
 
 interface ParserViewProps {
-  onParsingComplete: (data: ParsedDataItem[]) => void;
+  onParsingComplete: (data: ParsedOutput) => void;
   templates: Template[];
   onTemplateSelected: (templateId: string) => void;
   availableRuleSets: MappingRuleSet[];
@@ -50,27 +50,24 @@ export const ParserView: React.FC<ParserViewProps> = (props) => {
   };
 
   const handleRulesConfigured = () => {
-    const selectedTemplate = getSelectedTemplate();
-    if (!selectedTemplate || !identifiedPartner) return;
+    const selectedRuleSet = availableRuleSets.find(rs => rs.id === selectedRuleSetId);
+    if (!selectedRuleSet || !identifiedPartner) return;
     
     console.log("Parsing with:", {
       file: uploadedFile?.name,
       partner: identifiedPartner?.name,
-      template: selectedTemplate.name,
-      ruleSet: availableRuleSets.find(rs => rs.id === selectedRuleSetId)?.name,
+      ruleSet: selectedRuleSet.name,
     });
     
     setTimeout(() => {
-      const mockData = generateMockParsedData(identifiedPartner, selectedTemplate);
+      const mockData = generateMockParsedData(identifiedPartner, selectedRuleSet);
       onParsingComplete(mockData);
     }, 1500);
   };
 
   const getSelectedTemplate = () => {
-    const selectedRuleSet = availableRuleSets.find(rs => rs.id === selectedRuleSetId);
-    if (!selectedRuleSet) return undefined;
-    // This logic is a bit simplified; a real app might need a more robust way to link back
-    return templates.find(t => t.compatibleRuleSetIds.includes(selectedRuleSet.id));
+    if (!selectedRuleSetId) return undefined;
+    return templates.find(t => t.compatibleRuleSetIds.includes(selectedRuleSetId));
   };
   
   const partnerTemplates = React.useMemo(() => {
